@@ -17,15 +17,17 @@
 }
 
 .login{
-  width: 100vw;
-  height: 100vh;
+  width: 30vw;
+  margin: 50px auto;
 }
 
-.login h1{
+.login h5{
   text-align: center;
+  width: 100%;
+  margin: 10px auto;
 }
 .login input{
-  margin: 0 auto;
+  margin: 10px 10px;
 
 }
 
@@ -105,7 +107,6 @@ header{
   background-color: #58C2E9;
   width: 80%;
   max-height: 85vh;
-  font-size: 3rem;
 }
 
 .buttonmenu {

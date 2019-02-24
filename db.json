@@ -1,15 +1,27 @@
 {
-  "users":[
-    { "id": 1, "name": "Karol", "password": null }
+  "users": [
+    {
+      "id": 1,
+      "name": "Karol",
+      "password": null
+    }
   ],
   "items": [
-    { "id": null, "user":null, "category": null, "date": null, "value": null}
+  
   ],
-  "years":[
-    {"2019": [
-      {"months":[
-        {"month": null, "przychody": null, "koszty": null}
-        ]}
-      ]}
+  "stats": [
+    {
+      "2019": [
+        {
+          "months": [
+            {
+              "month": null,
+              "income": null,
+              "cost": null
+            }
+          ]
+        }
+      ]
+    }
   ]
 }
