@@ -233,33 +233,53 @@ class AddTransaction extends React.Component {
   }
   changeSelectMain = (e) => {
     let newCategory;
+    let newAllData;
     if (e.target.value == 'Koszt') {
       newCategory = 'Żywność';
     } if (e.target.value == 'Wpływ') {
       newCategory = 'Wynagrodzenie';
     }
+    if (newCategory != ''){
+      newAllData = true;
+    }
       this.setState({
           categoryMain: e.target.value,
-          category: newCategory
+          category: newCategory,
+          allData: newAllData
       });
   }
 
   changeSelectCategory = (e) => {
       this.setState({
-          category: e.target.value,
-          allData: true
+          category: e.target.value
       });
   }
 
   passValue = (e) => {
     let newValue = Math.round(e.target.value * 100) / 100;
       this.setState({
-          value: newValue,
-          allData: true
+          value: newValue
       });
   }
 
+  addChangeStatistic = (id, meth, obj) => {
+    fetch(`http://localhost:3000/stats/${id}`, { method: meth, body: JSON.stringify(obj),headers: {
+           "Content-Type": "application/json",
+           // "Content-Type": "application/x-www-form-urlencoded",
+       } })
+    .then(resp => resp.json())
+    .then(data => {
+    })
+  }
+
   sendTransaction = (e) => {
+    let yearId = 0;
+    let index;
+    let month = this.state.month;
+    let amount = this.state.value;
+    let categoryMain = "cost";
+    let exist = false;
+    let monthId = 0;
     let addData = {
       "user": this.state.name,
       "categoryMain": this.state.categoryMain,
@@ -267,20 +287,58 @@ class AddTransaction extends React.Component {
       "date": `${this.state.year}/${this.state.month}/${this.state.day}`,
       "value": this.state.value
     };
-    console.log(addData);
-     fetch(`http://localhost:3000/items`, { method: 'POST', body: JSON.stringify(addData),headers: {
+    let addStatistic = {
+    }
+    if (this.state.categoryMain == "Wpływ") {
+      categoryMain = "income";
+    }
+    addStatistic[this.state.year] = [];
+    for (let i=0; i<12; i++){
+      addStatistic[this.state.year].push({month: i+1,target: null, income: 0, cost: 0});
+    }
+     fetch(`http://localhost:3000/items/`, { method: 'POST', body: JSON.stringify(addData),headers: {
             "Content-Type": "application/json",
             // "Content-Type": "application/x-www-form-urlencoded",
         } })
      .then(resp => resp.json())
      .then(data => {
-       console.log(data);
+       const stats = fetch(`http://localhost:3000/stats/`);
+       stats.then((response) => response.json())
+       .then((response) => {
+         if (response.length == 0){
+           addStatistic[`${this.state.year}`][month-1][categoryMain] = +amount;
+           this.addChangeStatistic('', 'POST', addStatistic);
+         } else {exist = response.some((e) => {
+           yearId = e.id;
+           index = response.indexOf(e);
+           return e[this.state.year] != undefined;
+            })
+            if (exist === true){
+              console.log('re',response[index]);
+              let addStatistics = response[index];
+              addStatistics[`${this.state.year}`][month-1][categoryMain] = addStatistics[`${this.state.year}`][month-1][categoryMain]+amount;
+              console.log(addStatistics);
+              this.addChangeStatistic(`${yearId}`, 'PUT', addStatistics);
+            } else if (exist === false) {
+              addStatistic[`${this.state.year}`][month-1][categoryMain] = +amount;
+              this.addChangeStatistic(``, 'POST', addStatistic);
+            }
+          }
+       });
+     })
+
+
+     this.setState({
+       categoryMain: '',
+       category: '',
+       value: 0,
+       allData: false
      })
 
   }
 
   render(){
-    let main = ['Koszt', 'Wpływ'];
+    let main = ['', 'Koszt', 'Wpływ'];
     let cost = ['Żywność', 'Ubrania', 'Rozrywka', 'Restauracje', 'Podróże', 'Opłaty','Inne'];
     let income = ['Wynagrodzenie', '500+', 'Wynajem', 'Inne'];
     return(
@@ -398,7 +456,7 @@ class Statistic extends React.Component {
     if (this.state.buttonStatus === 0){
       boxright = (<h3>{this.props.name}, jesteś w module statystyk. Wybierz z prawej strony co cię teraz interesuje</h3>)
     } if (this.state.buttonStatus === 1){
-      boxright = (<h3> Tu w przyszłości zobaczysz historie soich operacji</h3>)
+      boxright = (<OperationHistory className={'mright'} name={this.props.name} />)
     } if (this.state.buttonStatus === 2){
       boxright = (<h3> Tu w przyszłości zobaczysz ile łącznie wydałeś a ile zarobiłeś</h3>)
     } if (this.state.buttonStatus === 3){
@@ -421,6 +479,56 @@ class Statistic extends React.Component {
             {boxright}
           </div>
         </div>
+    )
+  }
+}
+
+class OperationList extends React.Component{
+  constructor(props){
+    super(props);
+    this.state = {
+
+    }
+  }
+  render(){
+    const mappedOperations = this.props.operations.map((operation) => {
+        return <li key={operation.id}> {operation.category} {operation.date} {operation.value}</li>
+    })
+    return(
+      <ul>
+        {mappedOperations}
+      </ul>
+    )
+  }
+}
+
+class OperationHistory extends React.Component {
+  constructor(props){
+    super(props);
+    this.state = {
+      operations: null,
+      loading: true
+    }
+  }
+  OperationData = () => {
+      const operation = fetch('http://localhost:3000/items/');
+      operation.then((response) => response.json())
+      .then((response) => {
+          this.setState({
+              operations: response,
+              loading: false
+          });
+      })
+  }
+  componentDidMount(){
+    this.OperationData();
+  }
+  render(){
+    return(
+      <div className={'boxright'}>
+        <h3>{this.props.name}, poniżej znajduje się historia twoich operacji</h3>
+        {!this.state.loading ? <OperationList operations={this.state.operations} /> : <h3>Ładowanie danych ...</h3>}
+      </div>
     )
   }
 }
