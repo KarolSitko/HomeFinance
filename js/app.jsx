@@ -33,7 +33,7 @@ class Logged extends React.Component {
       <div className={'login'}>
         <h5>Podaj nazwę urzytkownika</h5>
         <input type="text" value={this.state.name} onChange={this.inputHasChanged} />
-        <button onClick={this.LoginOn}>Zalogój</button>
+        <button onClick={this.LoginOn}>Zaloguj</button>
       </div>
     )
   }
@@ -43,23 +43,53 @@ class Menu extends React.Component {
   constructor(){
     super();
     this.state = {
+      menuState: 'hidden'
     }
+  }
+  changeMenuState = () => {
+    this.setState({
+      menuState: 'visible'
+    })
+  }
+  changeMenu = () => {
+    this.setState({
+      menuState: 'hidden'
+    })
   }
   render(){
     return(
-      <nav className={'menu'}>
-        <ul>
-          <li>
-            <Link to="/transaction">Dodaj</Link>
-          </li>
-          <li>
-            <Link to="/statistic">Statystyki</Link>
-          </li>
-          <li>
-            <Link to="/exit">Wyjście</Link>
-          </li>
+      <div>
+        <nav className={'menu'}>
+          <ul>
+            <li>
+              <Link to="/transaction">Dodaj</Link>
+            </li>
+            <li>
+              <Link to="/statistic">Statystyki</Link>
+            </li>
+            <li>
+              <Link to="/exit">Wyjście</Link>
+            </li>
           </ul>
-      </nav>
+        </nav>
+        <div className={'hamburger'}>
+          <img  onClick={this.changeMenuState} onMouseLeave={this.changeMenu} src="https://upload.wikimedia.org/wikipedia/commons/b/b2/Hamburger_icon.svg" alt="Otwórz menu" />
+          <div className={'hamburgerMenu'} style={ {visibility: `${this.state.menuState}`} } >
+              <ul>
+                <li>
+                  <Link to="/transaction">Dodaj</Link>
+                </li>
+                <li>
+                  <Link to="/statistic">Statystyki</Link>
+                </li>
+                <li>
+                  <Link to="/exit">Wyjście</Link>
+                </li>
+              </ul>
+            </div>
+
+        </div>
+      </div>
     )
   }
 }
@@ -180,7 +210,7 @@ class AddTransaction extends React.Component {
     this.state = {
       name: this.props.name,
       year: this.props.date.getFullYear(),
-      month: this.props.date.getMonth(),
+      month: this.props.date.getMonth()+1,
       day: this.props.date.getDate(),
       categoryMain: '',
       category: '',
@@ -284,7 +314,9 @@ class AddTransaction extends React.Component {
       "user": this.state.name,
       "categoryMain": this.state.categoryMain,
       "category": this.state.category,
-      "date": `${this.state.year}/${this.state.month}/${this.state.day}`,
+      "year": this.state.year,
+      "month":this.state.month,
+      "day":this.state.day,
       "value": this.state.value
     };
     let addStatistic = {
@@ -314,10 +346,8 @@ class AddTransaction extends React.Component {
            return e[this.state.year] != undefined;
             })
             if (exist === true){
-              console.log('re',response[index]);
               let addStatistics = response[index];
               addStatistics[`${this.state.year}`][month-1][categoryMain] = addStatistics[`${this.state.year}`][month-1][categoryMain]+amount;
-              console.log(addStatistics);
               this.addChangeStatistic(`${yearId}`, 'PUT', addStatistics);
             } else if (exist === false) {
               addStatistic[`${this.state.year}`][month-1][categoryMain] = +amount;
@@ -326,20 +356,18 @@ class AddTransaction extends React.Component {
           }
        });
      })
-
-
      this.setState({
        categoryMain: '',
        category: '',
        value: 0,
        allData: false
      })
-
   }
 
   render(){
+    let month = ['', 'Styczeń', 'Luty', 'Marzec', 'Kwiecień', 'Maj', 'Czerwiec', 'Lipiec', 'Sierpień', 'Wrzesień', 'Październik', 'Listopad', 'Grudzień'];
     let main = ['', 'Koszt', 'Wpływ'];
-    let cost = ['Żywność', 'Ubrania', 'Rozrywka', 'Restauracje', 'Podróże', 'Opłaty','Inne'];
+    let cost = ['Żywność', 'Ubrania','Środki czystości', 'Rozrywka', 'Restauracje', 'Podróże', 'Opłaty','Inne'];
     let income = ['Wynagrodzenie', '500+', 'Wynajem', 'Inne'];
     return(
       <div>
@@ -349,7 +377,7 @@ class AddTransaction extends React.Component {
           <input type="number" value={this.state.year} onChange={this.passYearValue} />
         </div>
         <div>
-          <p>Miesiąc {this.state.month}</p>
+          <p>Miesiąc {month[this.state.month]}</p>
           <input type="number" value={this.state.month} onChange={this.passMonthValue} />
         </div>
         <div>
@@ -439,7 +467,7 @@ class Statistic extends React.Component {
     })
   }
 
-  ClickViewEarn = () => {
+  ClickViewIncome = () => {
     this.setState({
       buttonStatus: 4
     })
@@ -456,7 +484,7 @@ class Statistic extends React.Component {
     if (this.state.buttonStatus === 0){
       boxright = (<h3>{this.props.name}, jesteś w module statystyk. Wybierz z prawej strony co cię teraz interesuje</h3>)
     } if (this.state.buttonStatus === 1){
-      boxright = (<OperationHistory className={'mright'} name={this.props.name} />)
+      boxright = (<OperationHistory className={'mright'} name={this.props.name} date={this.props.date}/>)
     } if (this.state.buttonStatus === 2){
       boxright = (<h3> Tu w przyszłości zobaczysz ile łącznie wydałeś a ile zarobiłeś</h3>)
     } if (this.state.buttonStatus === 3){
@@ -472,7 +500,7 @@ class Statistic extends React.Component {
             <Button buttontext={'Wykaz Operacji'} onButtonClicked={this.ClickViewHistory} />
             <Button buttontext={'Podsumowanie'} onButtonClicked={this.ClickViewStatistic} />
             <Button buttontext={'Wydatki'} onButtonClicked={this.ClickViewCost} />
-            <Button buttontext={'Przychody'} onButtonClicked={this.ClickViewEarn} />
+            <Button buttontext={'Przychody'} onButtonClicked={this.ClickViewIncome} />
             <Button buttontext={'Cel'} onButtonClicked={this.ClickViewGoal} />
           </div>
           <div className={'mright'}>
@@ -482,22 +510,246 @@ class Statistic extends React.Component {
     )
   }
 }
+class OperationEdit extends React.Component {
+  constructor(props){
+    super(props);
+      this.state = {
+        newOperation: this.props.operation,
+        name: this.props.operation.user,
+        year: this.props.operation.year,
+        month: this.props.operation.month,
+        day: this.props.operation.day,
+        categoryMain: this.props.operation.categoryMain,
+        category: this.props.operation.category,
+        value: this.props.operation.value
+    }
+  }
+
+  passYearValue = (e) => {
+      let changeOperation = this.state.newOperation;
+      changeOperation.year = e.target.value;
+      this.setState({
+          newOperation: changeOperation,
+          year: e.target.value
+      });
+  }
+
+  passMonthValue = (e) => {
+    let maxdate = '';
+    let changeOperation = this.state.newOperation;
+    if(e.target.value > 12){
+      maxdate = 12;
+    } if (e.target.value <1){
+      maxdate = 1;
+    } if (e.target.value >0 && e.target.value <=12) {
+      maxdate = e.target.value;
+    }
+    changeOperation.month = maxdate;
+    this.setState({
+        newOperation: changeOperation,
+        month: maxdate
+    });
+  }
+
+  passDayValue = (e) => {
+    let max = 31;
+    let maxdate = '';
+    let changeOperation = this.state.newOperation;
+    if (this.state.month == 4 || this.state.month == 6 || this.state.month == 9 || this.state.month == 11){
+      max = 30;
+    } if (this.state.month == 2 && this.state.year % 4 != 0){
+      max = 28;
+    } if (this.state.month == 2 && this.state.year % 4 == 0){
+      max = 29;
+    }
+    if(e.target.value > max){
+      maxdate = max;
+    } if (e.target.value <1){
+      maxdate = 1;
+    } if (e.target.value >0 && e.target.value <=max) {
+      maxdate = e.target.value;
+    }
+
+    changeOperation.day = maxdate;
+    this.setState({
+        newOperation: changeOperation,
+        day: maxdate
+    });
+  }
+  changeSelectMain = (e) => {
+    let changeOperation = this.state.newOperation;
+    let newCategory;
+    if (e.target.value == 'Koszt') {
+      newCategory = 'Żywność';
+    } if (e.target.value == 'Wpływ') {
+      newCategory = 'Wynagrodzenie';
+    }
+    changeOperation.categoryMain = e.target.value;
+    changeOperation.category = newCategory;
+      this.setState({
+          newOperation: changeOperation,
+          categoryMain: e.target.value,
+          category: newCategory
+      });
+  }
+
+  changeSelectCategory = (e) => {
+      let changeOperation = this.state.newOperation;
+      changeOperation.category = e.target.value;
+      this.setState({
+          newOperation: changeOperation,
+          category: e.target.value
+      });
+  }
+
+  passValue = (e) => {
+    let changeOperation = this.state.newOperation;
+    let newValue = Math.round(e.target.value * 100) / 100;
+    changeOperation.value = newValue;
+      this.setState({
+        newOperation: changeOperation,
+          value: newValue
+      });
+  }
+
+  onClickButton = () => {
+      if ( typeof this.props.editOperation === 'function' ){
+          this.props.editOperation(this.state.newOperation);
+      }
+  }
+  render(){
+    let month = ['', 'Styczeń', 'Luty', 'Marzec', 'Kwiecień', 'Maj', 'Czerwiec', 'Lipiec', 'Sierpień', 'Wrzesień', 'Październik', 'Listopad', 'Grudzień'];
+    let main = ['Koszt', 'Wpływ'];
+    let cost = ['Żywność', 'Ubrania','Środki czystości', 'Rozrywka', 'Restauracje', 'Podróże', 'Opłaty','Inne'];
+    let income = ['Wynagrodzenie', '500+', 'Wynajem', 'Inne'];
+    return(
+      <div className={'boxEdit'}>
+        <h5>Edytuj transakcje</h5>
+        <div>
+          <p>Rok {this.state.year}</p>
+          <input type="number" value={this.state.year} onChange={this.passYearValue} />
+        </div>
+        <div>
+          <p>Miesiąc {month[this.state.month]}</p>
+          <input type="number" value={this.state.month} onChange={this.passMonthValue} />
+        </div>
+        <div>
+          <p>Dzień {this.state.day}</p>
+          <input type="number" value={this.state.day} onChange={this.passDayValue} />
+        </div>
+        <p>Rodzaj Operacji</p>
+        <select value={this.state.categoryMain} onChange={this.changeSelectMain} >
+          {
+              main.map((e, index) => {
+                  return <option key={index} value={e}>{ e }</option>
+              })
+          }
+        </select>
+        {this.state.categoryMain =='Koszt' && <div>
+          <p>Wybierz szczeóły operacji</p>
+          <select value={this.state.category} onChange={this.changeSelectCategory} >
+              {
+                  cost.map((e, index) => {
+                      return <option key={index} value={e}>{ e }</option>
+                    })
+              }
+          </select>
+          </div>
+        }
+        {
+          this.state.categoryMain =='Wpływ' && <div>
+          <p>Wybierz szczeóły operacji</p>
+          <select value={this.state.category} onChange={this.changeSelectCategory} >
+              {
+                  income.map((e, index) => {
+                      return <option key={index} value={e}>{ e }</option>
+                  })
+              }
+          </select>
+          </div>
+        }
+          <p>Podaj wartość w PLN</p>
+          <input type="number" value={this.state.value} onChange={this.passValue} />
+          <span>zł</span>
+        <button onClick={this.onClickButton} className={'buttonmenu'}>Zatwierdź zmiany</button>
+      </div>
+    )
+  }
+}
 
 class OperationList extends React.Component{
   constructor(props){
     super(props);
     this.state = {
-
+      incomeSum: 0,
+      costSum: 0,
+      newOperation: '',
+      edit: false
     }
   }
+  buttonClickDelete = (id) => (e) => {
+    if ( typeof this.props.deleteOperation === 'function' ){
+        this.props.deleteOperation(id);
+    }
+  }
+  buttonClickEdit = (operation) => (e) => {
+    console.log(operation);
+    this.setState({
+      newOperation: operation,
+      edit: true
+    })
+
+  }
+  editOperation = (e) => {
+    if ( typeof this.props.editOperation === 'function' ){
+        this.props.editOperation(e);
+    }
+    this.setState({
+      edit: false,
+    })
+
+  }
   render(){
+    let incomes = 0;
+    let costs = 0;
     const mappedOperations = this.props.operations.map((operation) => {
-        return <li key={operation.id}> {operation.category} {operation.date} {operation.value}</li>
+      if (operation.categoryMain == "Koszt"){
+        costs = costs + operation.value;
+      } if (operation.categoryMain == "Wpływ"){
+        incomes = incomes + operation.value;
+      }
+        return(
+          <tr key={operation.id} className={'row'}>
+            <td>{operation.year}/{operation.month}/{operation.day}</td>
+            <td>{operation.category}</td>
+            {operation.categoryMain==='Koszt' ? <td>{operation.value}</td> : <td>-</td>}
+            {operation.categoryMain==='Wpływ' ? <td>{operation.value}</td> : <td>-</td>}
+            <td><button onClick={this.buttonClickDelete(operation.id)}>usuń</button></td>
+            <td><button onClick={this.buttonClickEdit(operation)}>edytuj</button></td>
+          </tr>
+        )
     })
     return(
-      <ul>
-        {mappedOperations}
-      </ul>
+      <div>
+        {this.state.edit && <OperationEdit editOperation={this.editOperation} operation={this.state.newOperation}/>}
+      <table>
+        <tbody>
+          <tr>
+            <th>Data</th>
+            <th>Rodzaj operacji</th>
+            <th>Kwota Rozchodu</th>
+            <th>Kwota Przychodu</th>
+          </tr>
+          {mappedOperations}
+          <tr>
+            <th>Razem</th>
+            <th></th>
+            <th>{costs}</th>
+            <th>{incomes}</th>
+          </tr>
+        </tbody>
+      </table>
+      </div>
     )
   }
 }
@@ -507,27 +759,92 @@ class OperationHistory extends React.Component {
     super(props);
     this.state = {
       operations: null,
-      loading: true
+      loading: true,
+      month: this.props.date.getMonth()+1,
+      year: this.props.date.getFullYear(),
+      newMonth: this.props.date.getMonth()+1,
+      newYear: this.props.date.getFullYear()
     }
   }
   OperationData = () => {
       const operation = fetch('http://localhost:3000/items/');
       operation.then((response) => response.json())
       .then((response) => {
+        let selectOperations = [];
+        response.forEach((e) => {
+          if (e.month == this.state.month && e.year == this.state.year){
+            selectOperations.push(e);
+          }
+        });
+        let sortOperations = selectOperations.sort((a,b) => {
+          return a.day - b.day;
+        })
           this.setState({
-              operations: response,
+              operations: selectOperations,
               loading: false
           });
       })
+  }
+  changeYearView = (e) => {
+      this.setState({
+          newYear: e.target.value
+      });
+  }
+
+  changeMonthView = (e) => {
+    let maxdate = '';
+    if(e.target.value > 12){
+      maxdate = 12;
+    } if (e.target.value <1){
+      maxdate = 1;
+    } if (e.target.value >0 && e.target.value <=12) {
+      maxdate = e.target.value;
+    }
+      this.setState({
+          newMonth: maxdate
+      });
+  }
+  changePeriod = () => {
+    this.setState({
+      month: this.state.newMonth,
+      year: this.state.newYear
+    })
+    this.OperationData();
+  }
+  deleteOperation = (id) => {
+    const deleteOperation = fetch(`http://localhost:3000/items/${id}`, { method: 'DELETE' });
+    deleteOperation.then(() => {
+        this.OperationData();
+    })
+  }
+  editOperation = (e) => {
+    let id = e.id;
+
+    fetch(`http://localhost:3000/items/${id}`, { method: 'PUT', body: JSON.stringify(e),headers: {
+           "Content-Type": "application/json",
+           // "Content-Type": "application/x-www-form-urlencoded",
+       } })
+    .then(resp => resp.json())
+    .then(data => {
+    })
   }
   componentDidMount(){
     this.OperationData();
   }
   render(){
+    let month = ['', 'Styczeń', 'Luty', 'Marzec', 'Kwiecień', 'Maj', 'Czerwiec', 'Lipiec', 'Sierpień', 'Wrzesień', 'Październik', 'Listopad', 'Grudzień'];
+
     return(
       <div className={'boxright'}>
-        <h3>{this.props.name}, poniżej znajduje się historia twoich operacji</h3>
-        {!this.state.loading ? <OperationList operations={this.state.operations} /> : <h3>Ładowanie danych ...</h3>}
+        <h3>{this.props.name}, poniżej znajduje się historia twoich operacji za:</h3>
+        <div>
+        <p>Miesiąc {month[this.state.month]}</p>
+        <input type="number" value={this.state.newMonth} onChange={this.changeMonthView} />
+        <p>Rok {this.state.year}</p>
+        <input type="number" value={this.state.newYear} onChange={this.changeYearView} />
+        <Button buttontext={'Zatwierdź nowy okres'} onButtonClicked={this.changePeriod} />
+        </div>
+        {!this.state.loading ? <OperationList operations={this.state.operations} deleteOperation={this.deleteOperation} editOperation={this.editOperation}/> : <h3>Ładowanie danych ...</h3>}
       </div>
     )
   }
@@ -583,14 +900,12 @@ class App extends React.Component {
     }
 
     componentDidMount() {
-        // this.intervalId = setInterval(() => {
             this.setState({
                 currentDate: new Date()
             });
-    //     }, 1000);
     }
     componentWillUnmount() {
-        // clearInterval(this.intervalId);
+
     }
 
     LoginOn = (user) => {

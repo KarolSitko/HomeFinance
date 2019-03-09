@@ -8,7 +8,7 @@
 .mainbox{
   height: 100vh;
   width: 100vw;
-  background-image: linear-gradient(180deg, white, gray);
+  background-image: linear-gradient(180deg, white, darkgray);
 }
 
 .container{
@@ -103,6 +103,13 @@ header{
   margin: 10px auto;
   display: flex;
   flex-direction: column;
+  position: relative;
+}
+.boxEdit{
+  background-color: red;
+  position: absolute;
+  top: 25%;
+  left: 25%;
 }
 
 .mright {
@@ -122,7 +129,41 @@ header{
   border-radius: 5px;
   margin-top: 10px;
   margin-right: 5%;
+}
+.hamburger{
+  height: 6vh;
+  display: none;
+  float: right;
+  margin-top: 2vh;
+  margin-bottom: 2vh;
+  position: relative;
+}
 
+.hamburgerMenu{
+  background-color: white;
+  text-decoration: none;
+  display: block;
+  position: absolute;
+  right: 0;
+  margin-top: 10px;
+  z-index: 2;
+}
+.hamburgerMenu li{
+  list-style: none;
+  margin: 1vh;
+  padding: 1vh;
+}
+.hamburgerMenu a{
+  text-decoration: none;
+  color: black;
+}
+table {
+  width: 90%;
+  margin: 0 auto;
+}
+.row:hover{
+  background-color: blue;
+  color: white;
 }
 @media only screen and (max-width: 640px) {
   .box {
@@ -137,8 +178,11 @@ header{
   .logo {
     font-size: 1rem;
   }
-  .menu a{
-    font-size: 0.5rem;
+  .menu{
+    display: none;
+  }
+  .hamburger{
+    display: inline-block;
   }
 }
 
