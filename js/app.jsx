@@ -617,6 +617,14 @@ class OperationEdit extends React.Component {
           this.props.editOperation(this.state.newOperation);
       }
   }
+  onClickButtonExit = () => {
+      this.setState({
+        newOperation: this.props.operation
+      })
+      if ( typeof this.props.exit === 'function' ){
+          this.props.exit();
+      }
+  }
   render(){
     let month = ['', 'Styczeń', 'Luty', 'Marzec', 'Kwiecień', 'Maj', 'Czerwiec', 'Lipiec', 'Sierpień', 'Wrzesień', 'Październik', 'Listopad', 'Grudzień'];
     let main = ['Koszt', 'Wpływ'];
@@ -672,6 +680,7 @@ class OperationEdit extends React.Component {
           <input type="number" value={this.state.value} onChange={this.passValue} />
           <span>zł</span>
         <button onClick={this.onClickButton} className={'buttonmenu'}>Zatwierdź zmiany</button>
+        <button onClick={this.onClickButtonExit} className={'buttonmenu'}>Nie edytuj</button>
       </div>
     )
   }
@@ -688,17 +697,19 @@ class OperationList extends React.Component{
     }
   }
   buttonClickDelete = (id) => (e) => {
-    if ( typeof this.props.deleteOperation === 'function' ){
-        this.props.deleteOperation(id);
+    if (this.state.edit == false){
+      if ( typeof this.props.deleteOperation === 'function' ){
+          this.props.deleteOperation(id);
+      }
     }
   }
   buttonClickEdit = (operation) => (e) => {
-    console.log(operation);
-    this.setState({
-      newOperation: operation,
-      edit: true
-    })
-
+    if (this.state.edit == false){
+      this.setState({
+        newOperation: operation,
+        edit: true
+      })
+    }
   }
   editOperation = (e) => {
     if ( typeof this.props.editOperation === 'function' ){
@@ -707,7 +718,11 @@ class OperationList extends React.Component{
     this.setState({
       edit: false,
     })
-
+  }
+  exit = (e) => {
+    this.setState({
+      edit: false
+    })
   }
   render(){
     let incomes = 0;
@@ -731,7 +746,7 @@ class OperationList extends React.Component{
     })
     return(
       <div>
-        {this.state.edit && <OperationEdit editOperation={this.editOperation} operation={this.state.newOperation}/>}
+        {this.state.edit && <OperationEdit editOperation={this.editOperation} exit={this.exit} operation={this.state.newOperation}/>}
       <table>
         <tbody>
           <tr>
