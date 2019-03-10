@@ -47,8 +47,14 @@ class Menu extends React.Component {
     }
   }
   changeMenuState = () => {
+    let viewHamburger;
+    if (this.state.menuState == 'hidden'){
+      viewHamburger = 'visible';
+    } else if (this.state.menuState == 'visible'){
+      viewHamburger = 'hidden';
+    }
     this.setState({
-      menuState: 'visible'
+      menuState: viewHamburger
     })
   }
   changeMenu = () => {
@@ -73,17 +79,17 @@ class Menu extends React.Component {
           </ul>
         </nav>
         <div className={'hamburger'}>
-          <img  onClick={this.changeMenuState} onMouseLeave={this.changeMenu} src="https://upload.wikimedia.org/wikipedia/commons/b/b2/Hamburger_icon.svg" alt="Otwórz menu" />
+          <img  onClick={this.changeMenuState}  src="https://upload.wikimedia.org/wikipedia/commons/b/b2/Hamburger_icon.svg" alt="Otwórz menu" />
           <div className={'hamburgerMenu'} style={ {visibility: `${this.state.menuState}`} } >
               <ul>
                 <li>
-                  <Link to="/transaction">Dodaj</Link>
+                  <Link to="/transaction" onClick={this.changeMenuState} >Dodaj</Link>
                 </li>
                 <li>
-                  <Link to="/statistic">Statystyki</Link>
+                  <Link to="/statistic" onClick={this.changeMenuState} >Statystyki</Link>
                 </li>
                 <li>
-                  <Link to="/exit">Wyjście</Link>
+                  <Link to="/exit" onClick={this.changeMenuState} >Wyjście</Link>
                 </li>
               </ul>
             </div>

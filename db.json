@@ -325,12 +325,12 @@
     },
     {
       "user": "Karol",
-      "categoryMain": "Koszt",
-      "category": "Żywność",
+      "categoryMain": "Wpływ",
+      "category": "Inne",
       "year": 2019,
       "month": 3,
       "day": "9",
-      "value": 46.9,
+      "value": 81.5,
       "id": 42
     },
     {
@@ -352,6 +352,16 @@
       "day": "4",
       "value": 86,
       "id": 45
+    },
+    {
+      "user": "Karol",
+      "categoryMain": "Koszt",
+      "category": "Żywność",
+      "year": 2019,
+      "month": 3,
+      "day": 10,
+      "value": 2.49,
+      "id": 46
     }
   ],
   "stats": [
@@ -373,7 +383,7 @@
           "month": 3,
           "target": null,
           "income": 15290,
-          "cost": 1158.18
+          "cost": 1410.67
         },
         {
           "month": 4,

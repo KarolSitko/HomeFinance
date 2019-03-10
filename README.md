@@ -6,7 +6,9 @@ Weresja developerska
 
 # Technologies:
 - ES6
-- React itd
+- React
+- JSON
+- Webpack
 
 # Features:
 - logowanie do aplikacji po nazwie użytkownika
@@ -28,10 +30,10 @@ Weresja developerska
 - logowanie za pomocą nazwy użytkownia i zabezpieczonego hasła
 - możliwość dodawania innych użytkownikó (gospodarstw domowych)
 
-#Status
+# Status:
 aplikacja w trakcie tworzenia
 
-#Instalation:
+# Instalation:
 - otwarcie konsoli i wpisanie komend
 - npm install
 - npm start lub npm run start & npm run jsonser
