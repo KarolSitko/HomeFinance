@@ -7,8 +7,9 @@ Weresja developerska
 # Technologies:
 - ES6
 - React
-- JSON
+- JSON-Server
 - Webpack
+- Fetch
 
 # Features:
 - logowanie do aplikacji po nazwie użytkownika
