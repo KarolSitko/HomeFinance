@@ -362,6 +362,16 @@
       "day": 10,
       "value": 2.49,
       "id": 46
+    },
+    {
+      "user": "Karol",
+      "categoryMain": "Koszt",
+      "category": "Restauracje",
+      "year": 2019,
+      "month": 3,
+      "day": 14,
+      "value": 39,
+      "id": 48
     }
   ],
   "stats": [
@@ -382,8 +392,8 @@
         {
           "month": 3,
           "target": null,
-          "income": 15290,
-          "cost": 1410.67
+          "income": 15850,
+          "cost": 1522.03
         },
         {
           "month": 4,
