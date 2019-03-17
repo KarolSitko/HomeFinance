@@ -89,6 +89,9 @@ class AddTransaction extends React.Component {
     .then(resp => resp.json())
     .then(data => {
     })
+    .catch(err => {
+      alert('Coś poszło nie tak, błąd połączenia');
+    });
   }
   sendTransaction = (e) => {
     let yearId = 0;
@@ -142,8 +145,14 @@ class AddTransaction extends React.Component {
               this.addChangeStatistic(``, 'POST', addStatistic);
             }
           }
+       })
+       .catch(err => {
+         alert('Coś poszło nie tak, błąd połączenia');
        });
      })
+     .catch(err => {
+       alert('Coś poszło nie tak, błąd połączenia');
+     });
      this.setState({
        categoryMain: '',
        category: '',

@@ -32,6 +32,9 @@ class OperationHistory extends React.Component {
               loading: false
           });
       })
+      .catch(err => {
+        alert('Coś poszło nie tak, błąd połączenia');
+      });
   }
   changeYearView = (e) => {
       this.setState({
@@ -63,6 +66,9 @@ class OperationHistory extends React.Component {
     deleteOperation.then(() => {
         this.OperationData();
     })
+    .catch(err => {
+      alert('Coś poszło nie tak, błąd połączenia');
+    });
   }
   editOperation = (e) => {
     let id = e.id;
@@ -74,6 +80,9 @@ class OperationHistory extends React.Component {
     .then(resp => resp.json())
     .then(data => {
     })
+    .catch(err => {
+      alert('Coś poszło nie tak, błąd połączenia');
+    });
   }
   componentDidMount(){
     this.OperationData();

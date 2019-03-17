@@ -91,6 +91,9 @@ class App extends React.Component {
           })
         }
       })
+      .catch(err => {
+        alert('Coś poszło nie tak, błąd połączenia');
+      });
     }
   LoginOff = () => {
       this.setState({

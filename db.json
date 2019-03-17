@@ -365,8 +365,8 @@
     },
     {
       "user": "Karol",
-      "categoryMain": "Koszt",
-      "category": "Restauracje",
+      "categoryMain": "Wpływ",
+      "category": "Wynagrodzenie",
       "year": 2019,
       "month": 3,
       "day": 14,
@@ -393,7 +393,7 @@
           "month": 3,
           "target": null,
           "income": 15850,
-          "cost": 1522.03
+          "cost": 1572.03
         },
         {
           "month": 4,
